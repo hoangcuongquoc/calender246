@@ -14,12 +14,14 @@ import { environment } from '../../environments/environment';
 import { ThemeService } from '../theme.service';
 import { CalendarStateService } from '../calendar/calendar-state.service';
 import { DEFAULT_SETTINGS, UserSettings } from './settings.types';
+import { AppStartupService } from '../shared/app-startup.service';
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
   private readonly http = inject(HttpClient);
   private readonly theme = inject(ThemeService);
   private readonly calendar = inject(CalendarStateService);
+  private readonly startup = inject(AppStartupService);
 
   readonly settings = signal<UserSettings>(DEFAULT_SETTINGS);
   readonly loaded = signal(false);
@@ -54,9 +56,11 @@ export class SettingsService {
       this.loaded.set(true);
       this.applyTheme();
       this.applyDefaultViewOnce();
+      this.startup.markDone('settings');
     } catch {
       // Chưa đăng nhập / server chưa chạy: giữ mặc định, không chặn app.
       this.loaded.set(false);
+      this.startup.markDone('settings');
     }
   }
 

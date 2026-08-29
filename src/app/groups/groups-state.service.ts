@@ -7,12 +7,14 @@ import { GroupsApiService } from './groups-api.service';
 import { GoogleMeetService } from './google-meet.service';
 import { GroupRealtimeService, GroupEventMessage } from './realtime.service';
 import { Group, PendingGroupInvite } from './groups.types';
+import { AppStartupService } from '../shared/app-startup.service';
 
 @Injectable({ providedIn: 'root' })
 export class GroupsStateService {
   private readonly api = inject(GroupsApiService);
   private readonly meet = inject(GoogleMeetService);
   private readonly realtime = inject(GroupRealtimeService);
+  private readonly startup = inject(AppStartupService);
 
   readonly groups = signal<Group[]>([]);
   readonly error = signal<string | null>(null);
@@ -145,8 +147,12 @@ export class GroupsStateService {
         for (const id of prevIds) {
           if (!nextIds.has(id)) this.realtime.leaveGroup(id);
         }
+        this.startup.markDone('groups');
       },
-      error: () => this.error.set('Không tải được danh sách nhóm.'),
+      error: () => {
+        this.error.set('Không tải được danh sách nhóm.');
+        this.startup.markDone('groups');
+      },
     });
   }
 

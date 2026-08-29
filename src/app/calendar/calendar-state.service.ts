@@ -13,6 +13,7 @@ import { EventsApiService, RecurrenceOptions, Invitation } from './events-api.se
 import { SupabaseService } from '../auth/supabase.service';
 import { SharingApiService } from '../sharing/sharing-api.service';
 import { GoogleMeetService } from '../groups/google-meet.service';
+import { AppStartupService } from '../shared/app-startup.service';
 
 /** Sự kiện đang chờ tạo Google Meet, ghi lại trước khi rời app đi xin quyền. */
 const PENDING_MEET_KEY = 'pending-meet-event';
@@ -25,6 +26,7 @@ export class CalendarStateService {
   private readonly supabase = inject(SupabaseService);
   private readonly sharingApi = inject(SharingApiService);
   private readonly meet = inject(GoogleMeetService);
+  private readonly startup = inject(AppStartupService);
 
   /** Các lịch được chia sẻ CHO mình (kèm vai trò) — để phân biệt & phân quyền editor. */
   readonly sharedCalendars = signal<{ id: string; role: 'viewer' | 'editor' }[]>([]);
@@ -74,8 +76,9 @@ export class CalendarStateService {
           }
           this.knownSharedIds = ids;
         }
+        this.startup.markDone('sharedCalendars');
       },
-      error: () => {},
+      error: () => this.startup.markDone('sharedCalendars'),
     });
   }
 
@@ -243,10 +246,12 @@ export class CalendarStateService {
       next: (events) => {
         this.events.set(this.applyPins(events));
         this.isLoading.set(false);
+        this.startup.markDone('events');
       },
       error: () => {
         this.loadError.set('Không tải được danh sách sự kiện. Kiểm tra lại NestJS server đã chạy và đã đăng nhập chưa.');
         this.isLoading.set(false);
+        this.startup.markDone('events');
       },
     });
   }
@@ -254,8 +259,14 @@ export class CalendarStateService {
   /** Tải lại danh sách lời mời chưa trả lời (cho chuông thông báo). */
   reloadInvitations(): void {
     this.api.listInvitations().subscribe({
-      next: (l) => this.invitations.set(l),
-      error: () => this.invitations.set([]),
+      next: (l) => {
+        this.invitations.set(l);
+        this.startup.markDone('invitations');
+      },
+      error: () => {
+        this.invitations.set([]);
+        this.startup.markDone('invitations');
+      },
     });
   }
 

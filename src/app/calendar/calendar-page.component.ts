@@ -33,6 +33,8 @@ import { SupabaseService } from '../auth/supabase.service';
 import { SettingsService } from '../settings/settings.service';
 import { TranslateService } from '../i18n/translate.service';
 import { SelectComponent, SelectOption } from '../shared/select.component';
+import { LoadingScreenComponent } from '../shared/loading-screen.component';
+import { AppStartupService } from '../shared/app-startup.service';
 
 @Component({
   selector: 'app-calendar-page',
@@ -54,9 +56,17 @@ import { SelectComponent, SelectOption } from '../shared/select.component';
     SelectComponent,
     FormsModule,
     RouterLink,
+    LoadingScreenComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    <!-- Lần mở app đầu tiên -> che toàn màn hình bằng loading page cho tới khi TẤT CẢ lệnh tải
+         khởi động xong (sự kiện, lời mời, lịch chia sẻ, nhóm, cài đặt) — startup.isReady() chỉ
+         chuyển true đúng 1 lần nên các lần reload() sau (RSVP, tạo sự kiện, realtime...) không
+         che lại màn hình nữa. Thanh tiến trình trong app-loading-screen ăn theo startup.progress(). -->
+    @if (!startup.isReady()) {
+      <app-loading-screen />
+    }
     <div class="flex h-screen flex-col bg-gray-50 text-gray-900">
       @if (state.loadError(); as msg) {
         <div class="flex items-center justify-between gap-3 border-b border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
@@ -500,6 +510,7 @@ import { SelectComponent, SelectOption } from '../shared/select.component';
 })
 export class CalendarPageComponent implements OnInit {
   protected readonly state = inject(CalendarStateService);
+  protected readonly startup = inject(AppStartupService);
   protected readonly groupsState = inject(GroupsStateService);
   protected readonly chat = inject(GroupChatService);
   protected readonly supabase = inject(SupabaseService);

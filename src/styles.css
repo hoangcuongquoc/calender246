@@ -708,6 +708,11 @@ body { background-color: var(--app-bg); }
 }
 .field:focus { outline: none; border-color: var(--accent-600); box-shadow: var(--focus-ring); }
 .field::placeholder { color: #9ca3af; }
+/* Ẩn mũi tên tăng/giảm mặc định của <input type="number"> — xấu và không đồng bộ theme.
+   Dùng stepper tự vẽ (nút −/+) hoặc để ô số gọn gàng như các .field khác. */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type='number'] { -moz-appearance: textfield; appearance: textfield; }
 /* Trước đây chỉ vá border-color cho .dark .field — <input>/<select>/<textarea> "may mắn"
    vẫn tối đúng nhờ 1 rule KHÔNG LỚP khác ở trên (.dark input, .dark select, .dark textarea)
    ghi đè hộ, nhưng .field cũng được dùng trên <button> (vd app-select) — thẻ button không

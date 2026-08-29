@@ -181,7 +181,7 @@ const DICT: Record<Lang, Record<string, string>> = {
     'form.addGuest': 'Thêm khách bằng email', 'form.add': 'Thêm', 'form.removeGuest': 'Bỏ khách',
     'form.guestRoleHint': 'Chỉ xem = chỉ xem sự kiện; Chỉnh sửa = được sửa nội dung sự kiện.',
     'form.addLocation': 'Thêm vị trí', 'form.addDesc': 'Thêm mô tả', 'form.save': 'Lưu', 'form.saving': 'Đang lưu…',
-    'form.htmlHint': 'Dùng được HTML: <b>đậm</b>, <i>nghiêng</i>, <ul><li>gạch đầu dòng</li></ul>, <a href="...">liên kết</a>.',
+  
     'form.htmlPreview': 'Xem trước', 'form.htmlEdit': 'Sửa tiếp',
     'detail.showMore': 'Xem thêm', 'detail.showLess': 'Thu gọn',
     'detail.lunarShort': 'âm',
@@ -440,7 +440,7 @@ const DICT: Record<Lang, Record<string, string>> = {
     'form.addGuest': 'Add guest by email', 'form.add': 'Add', 'form.removeGuest': 'Remove guest',
     'form.guestRoleHint': 'Viewer = view only; Editor = can edit the event content.',
     'form.addLocation': 'Add location', 'form.addDesc': 'Add description', 'form.save': 'Save', 'form.saving': 'Saving…',
-    'form.htmlHint': 'HTML allowed: <b>bold</b>, <i>italic</i>, <ul><li>bullets</li></ul>, <a href="...">links</a>.',
+
     'form.htmlPreview': 'Preview', 'form.htmlEdit': 'Back to editing',
     'detail.showMore': 'Show more', 'detail.showLess': 'Show less',
     'detail.lunarShort': 'lunar',

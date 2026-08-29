@@ -55,14 +55,14 @@ interface LunarCell {
 
         <!-- Thanh điều hướng tháng -->
         <div class="flex items-center justify-between">
-          <button type="button" (click)="prevMonth()" class="tap rounded-md border border-gray-300 bg-white p-2 hover:bg-gray-100">
+          <button type="button" (click)="prevMonth()" aria-label="Tháng trước" class="tap flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-gray-300 bg-white text-gray-600 shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900">
             <app-icon name="chevron-left" class="h-5 w-5" />
           </button>
           <div class="text-center">
             <p class="text-base font-medium">{{ monthLabel() }}</p>
             <button type="button" (click)="goToday()" class="text-xs text-blue-600">{{ tr.t('lunar.today') }}</button>
           </div>
-          <button type="button" (click)="nextMonth()" class="tap rounded-md border border-gray-300 bg-white p-2 hover:bg-gray-100">
+          <button type="button" (click)="nextMonth()" aria-label="Tháng sau" class="tap flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-gray-300 bg-white text-gray-600 shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900">
             <app-icon name="chevron-right" class="h-5 w-5" />
           </button>
         </div>

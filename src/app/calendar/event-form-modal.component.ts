@@ -242,7 +242,7 @@ type CustomFreq = 'daily' | 'weekly' | 'monthly' | 'yearly';
                   <textarea [(ngModel)]="description" rows="3" maxlength="5000" [placeholder]="tr.t('form.addDesc')" class="min-h-[3rem] max-h-48 w-full resize-none overflow-y-auto whitespace-pre-wrap break-words field [field-sizing:content]"></textarea>
                 }
                 <div class="mt-1 flex items-start justify-between gap-2">
-                  <p class="text-xs text-gray-400">{{ tr.t('form.htmlHint') }}</p>
+                
                   @if (description()) {
                     <button type="button" (click)="descPreview.set(!descPreview())" class="tap shrink-0 text-xs text-blue-600 hover:underline">
                       {{ descPreview() ? tr.t('form.htmlEdit') : tr.t('form.htmlPreview') }}
@@ -260,11 +260,19 @@ type CustomFreq = 'daily' | 'weekly' | 'monthly' | 'yearly';
               </div>
               @for (r of reminders(); track $index) {
                 <div class="flex flex-wrap items-center gap-2 pl-6">
-                  <input
-                    type="number" min="0" max="200" step="1"
-                    [ngModel]="r.value" (ngModelChange)="setReminderValue($index, $event)"
-                    class="w-20 field"
-                  />
+                  <div class="field inline-flex items-stretch overflow-hidden !p-0">
+                    <button type="button" (click)="stepReminder($index, -1)" [disabled]="r.value <= 0"
+                      class="tap flex w-8 items-center justify-center text-lg leading-none text-gray-500 hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300 dark:hover:bg-white/5"
+                      aria-label="Giảm">−</button>
+                    <input
+                      type="number" min="0" max="200" step="1" inputmode="numeric"
+                      [ngModel]="r.value" (ngModelChange)="setReminderValue($index, $event)"
+                      class="w-10 border-x border-[var(--surface-line)] bg-transparent py-2 text-center text-sm focus:outline-none dark:border-[#273244]"
+                    />
+                    <button type="button" (click)="stepReminder($index, 1)" [disabled]="r.value >= 200"
+                      class="tap flex w-8 items-center justify-center text-lg leading-none text-gray-500 hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300 dark:hover:bg-white/5"
+                      aria-label="Tăng">+</button>
+                  </div>
                   <app-select [options]="unitOptions()" [ngModel]="r.unit" (ngModelChange)="setReminderUnit($index, $event)" class="w-28" />
                   <span class="text-gray-500">{{ tr.t('notif.before') }}</span>
                   <button type="button" (click)="removeReminder($index)" class="tap ml-auto rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-red-600" [attr.aria-label]="tr.t('notif.removeReminder')">
@@ -611,6 +619,11 @@ export class EventFormModalComponent {
     // Chặn [0, 200] và làm tròn số nguyên (bỏ ký tự lạ / số âm).
     const n = Math.min(Math.max(Math.round(Number(v) || 0), 0), 200);
     this.reminders.update((l) => l.map((r, idx) => (idx === i ? { ...r, value: n } : r)));
+  }
+  /** Nút −/+ của stepper: tăng/giảm 1 đơn vị, vẫn kẹp trong [0, 200]. */
+  stepReminder(i: number, delta: number): void {
+    const cur = this.reminders()[i]?.value ?? 0;
+    this.setReminderValue(i, cur + delta);
   }
   setReminderUnit(i: number, u: ReminderUnit): void {
     this.reminders.update((l) => l.map((r, idx) => (idx === i ? { ...r, unit: u } : r)));
